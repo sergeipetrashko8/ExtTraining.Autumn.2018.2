@@ -46,6 +46,7 @@
     <Compile Include="Log\Logger.cs" />
     <Compile Include="Manager\IPrinterManager.cs" />
     <Compile Include="Manager\PrinterManager.cs" />
+    <Compile Include="PrintedEventArgs.cs" />
     <Compile Include="Repository\IPrintersRepository.cs" />
     <Compile Include="Repository\PrintersRepository.cs" />
     <Compile Include="Printers\CanonPrinter.cs" />

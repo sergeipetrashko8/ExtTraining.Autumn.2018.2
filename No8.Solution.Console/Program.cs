@@ -21,7 +21,7 @@ namespace No8.Solution.Console
 
             Logger logger = new Logger();
 
-            printerManager.Printed += logger.Log;
+            printerManager.Logged += logger.Log;
 
             while (true)
             {
@@ -41,7 +41,6 @@ namespace No8.Solution.Console
                     {
                         case 1:
                         {
-
                             while (true)
                             {
                                 WriteLine("\nChose a brand:");
@@ -53,8 +52,7 @@ namespace No8.Solution.Console
 
                                 Write("Number of your choice: ");
 
-                                    if (int.TryParse(ReadLine(), out int choice1) &&
-                                    Enumerable.Range(1, 3).Contains(choice1))
+                                if (int.TryParse(ReadLine(), out int choice1) && Enumerable.Range(1, 3).Contains(choice1))
                                 {
                                     switch (choice1)
                                     {
@@ -110,6 +108,12 @@ namespace No8.Solution.Console
                             IEnumerable<Printer> epsonPrinters =
                                 printerManager.Where(printer => printer.Brand == "Epson");
 
+                            if (epsonPrinters.Count() == 0)
+                            {
+                                WriteLine("There aren't Epson printers into the repository!\n");
+                                break;
+                            }
+                            
                             foreach (var printer in epsonPrinters)
                             {
                                 WriteLine(printer);
@@ -126,10 +130,12 @@ namespace No8.Solution.Console
                                 openFileDlg.CheckFileExists = true;
                                 openFileDlg.ShowDialog();
 
+                                ForegroundColor = ConsoleColor.Cyan;
                                 if (File.Exists(openFileDlg.FileName)) WriteLine(printerManager.Print(typeof(EpsonPrinter), model, openFileDlg.FileName));
+                                ForegroundColor = ConsoleColor.White;
                             }
 
-                            else
+                                else
                             {
                                 WriteLine("No printers of this model!\n");
                             }
@@ -143,12 +149,18 @@ namespace No8.Solution.Console
                             IEnumerable<Printer> canonPrinters =
                                 printerManager.Where(printer => printer.Brand.Equals("Canon"));
 
-                            foreach (var printer in canonPrinters)
+                            if (canonPrinters.Count() == 0)
                             {
-                                WriteLine(printer);
+                                WriteLine("There aren't Canon printers into the repository!\n");
+                                break;
                             }
+                            
+                                foreach (var printer in canonPrinters)
+                                {
+                                    WriteLine(printer);
+                                }
 
-                            Write("Chose model: ");
+                                Write("Chose model: ");
 
                             string model = ReadLine();
 
@@ -157,8 +169,9 @@ namespace No8.Solution.Console
                                 var openFileDlg = new OpenFileDialog {Multiselect = false, CheckFileExists = true};
                                 openFileDlg.ShowDialog();
 
+                                ForegroundColor = ConsoleColor.Cyan;
                                 if (File.Exists(openFileDlg.FileName)) WriteLine(printerManager.Print(typeof(CanonPrinter), model, openFileDlg.FileName));
-                               
+                                ForegroundColor = ConsoleColor.White;
                             }
 
                             else

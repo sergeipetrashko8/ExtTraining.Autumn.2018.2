@@ -13,11 +13,16 @@ namespace No8.Solution.Manager
     public class PrinterManager : IPrinterManager
     {
         /// <summary>
-        ///     Event that happens during printing
+        ///     Event that happens at start and at end of printing
         /// </summary>
         public event PrinterDelegate Printed = delegate { };
 
-        private readonly PrintersRepository _repository;
+        /// <summary>
+        ///     Event that happens to log print information
+        /// </summary>
+        public event EventHandler<PrintedEventArgs> Logged = delegate { };
+
+        private readonly IPrintersRepository _repository;
 
         /// <summary>
         ///     Default constructor
@@ -59,13 +64,19 @@ namespace No8.Solution.Manager
 
             if (currentPrinter == null) throw new InvalidOperationException($"Printer {brand} {model} doesn't exist in repository");
 
-            OnPrinted("Print started...");
+            OnPrinted($"Print started on {currentPrinter.Brand} {currentPrinter.Model}");
 
             var text = currentPrinter.Print(fileName);
 
-            OnPrinted($"{currentPrinter} \n\rPrinted text: {text}");
+            OnLogged(new PrintedEventArgs()
+            {
+                BrandOfPrinter = currentPrinter.Brand,
+                ModelOfPrinter = currentPrinter.Model,
+                FileName = fileName,
+                TimeOfPrinting = DateTime.Now
+            });
 
-            OnPrinted("Print finished...");
+            OnPrinted($"Print finished on {currentPrinter.Brand} {currentPrinter.Model}");
 
             return text;
         }
@@ -78,7 +89,16 @@ namespace No8.Solution.Manager
         {
             Printed(message);
         }
-        
+
+        /// <summary>
+        ///     Invoked on print done
+        /// </summary>
+        ///<param name="e"><see cref="PrintedEventArgs"/> object</param>
+        protected virtual void OnLogged(PrintedEventArgs e)
+        {
+            Logged(this, e);
+        }
+
         /// <summary>
         ///     Returns enumerator of repository
         /// </summary>

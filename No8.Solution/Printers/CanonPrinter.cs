@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using System.Text;
+using System.Windows.Forms;
 
 namespace No8.Solution.Printers
 {
@@ -30,10 +31,16 @@ namespace No8.Solution.Printers
 
             using (var fileStream = File.OpenRead(fileName))
             {
-                byte[] bytes = new byte[fileStream.Length];
-                fileStream.Read(bytes, 0, bytes.Length);
+                var builder = new StringBuilder();
 
-                textToPrint = Encoding.Unicode.GetString(bytes);
+                int current;
+
+                while ((current = fileStream.ReadByte()) > -1)
+                {
+                    builder.Append(current).Append(" ");
+                }
+
+                textToPrint = builder.ToString();
             }
 
             return textToPrint;
