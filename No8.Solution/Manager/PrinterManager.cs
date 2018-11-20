@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using No8.Solution.Log;
 using No8.Solution.Printers;
 using No8.Solution.Repository;
 
