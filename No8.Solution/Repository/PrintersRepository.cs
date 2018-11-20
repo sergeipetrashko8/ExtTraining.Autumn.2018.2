@@ -26,7 +26,7 @@ namespace No8.Solution.Repository
         /// <returns>True if printer added successfully else false</returns>
         public bool Add(Printer newPrinter)
         {
-            if (Contains(newPrinter))
+            if (!Contains(newPrinter))
             {
                 _printers.Add(newPrinter);
                 return true;
@@ -42,7 +42,7 @@ namespace No8.Solution.Repository
         /// <returns>True if printer is into the repository else false</returns>
         public bool Contains(Printer printer)
         {
-            return !_printers.Contains(printer);
+            return _printers.Contains(printer);
         }
 
         /// <summary>
