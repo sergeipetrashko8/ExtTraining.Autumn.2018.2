@@ -17,12 +17,12 @@ namespace No8.Solution.Tests
             PrintedEventArgs args = new PrintedEventArgs()
             {
                 BrandOfPrinter = "Canon",
-                FileName = fileToLog,
+                Message = fileToLog,
                 ModelOfPrinter = "1532",
-                TimeOfPrinting = DateTime.Now
+                TimeOfEvent = DateTime.Now
             };
 
-            string expected = $"{args.BrandOfPrinter} {args.ModelOfPrinter} {fileToLog} {args.TimeOfPrinting}";
+            string expected = $"PRINTER [ Brand: {args.BrandOfPrinter,-5} Model: {args.ModelOfPrinter,-5} ] Time of event: {args.TimeOfEvent}\nMessage: {args.Message}".Trim();
             string actual;
 
             logger.Log(null, args);
@@ -33,6 +33,12 @@ namespace No8.Solution.Tests
             }
 
             Assert.AreEqual(expected, actual);
+        }
+
+        [Test]
+        public void Constructor_TakeNullReferenceToFileName_ExpectedArgumentNullException()
+        {
+            Assert.Throws<ArgumentNullException>(() => new Logger(null));
         }
     }
 }

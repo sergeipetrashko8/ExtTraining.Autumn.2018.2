@@ -21,7 +21,10 @@ namespace No8.Solution.Manager
         /// </summary>
         public static PrinterManager Instance => LazyInstance.Value;
 
-        static PrinterManager() { }
+        private PrinterManager()
+        {
+            _printers = new List<Printer>();
+        }
 
         #endregion
 
@@ -31,15 +34,7 @@ namespace No8.Solution.Manager
         public event EventHandler<PrintedEventArgs> Logged = delegate { };
 
         private readonly IList<Printer> _printers;
-
-        /// <summary>
-        ///     Default constructor
-        /// </summary>
-        public PrinterManager()
-        {
-            _printers = new List<Printer>();
-        }
-
+        
         /// <summary>
         ///     Adds printers to <see cref="Printer"/> list
         /// </summary>
@@ -58,6 +53,14 @@ namespace No8.Solution.Manager
             printer.EndPrint += PrinterEventHandler;
             
             return true;
+        }
+
+        /// <summary>
+        ///     Clear list of <see cref="Printer"/> objects
+        /// </summary>
+        public void Clear()
+        {
+            _printers.Clear();
         }
 
         /// <summary>
@@ -105,7 +108,7 @@ namespace No8.Solution.Manager
         /// </summary>
         /// <param name="sender">Sender of event</param>
         /// <param name="e"><see cref="String"/> message</param>
-        private void PrinterEventHandler(object sender, /*PrintedEventArgs*/string e)
+        private void PrinterEventHandler(object sender, string e)
         {
             var printer = sender as Printer;
 

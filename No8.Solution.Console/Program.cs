@@ -17,7 +17,7 @@ namespace No8.Solution.Console
         {
             WriteLine("Application started...\n");
 
-            PrinterManager printerManager = new PrinterManager();
+            PrinterManager printerManager = PrinterManager.Instance;
 
             Logger logger = new Logger();
 

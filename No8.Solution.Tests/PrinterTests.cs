@@ -25,35 +25,5 @@ namespace No8.Solution.Tests
             Assert.AreEqual(printerEpson1, printerEpson2);
             Assert.AreNotEqual(printerEpson2, printerEpson3);
         }
-
-        [Test]
-        public void Print()
-        {
-            var printerCanon1 = new CanonPrinter("25");
-            var printerEpson1 = new EpsonPrinter("345");
-
-            string fileName1 = "test1.txt";
-            string fileName2 = "test2.txt";
-
-            string information = "98374ch345ocw3ih478cy3298u4c8923x9 289";
-
-            using (var fileStream = File.CreateText(fileName1))
-            {
-                fileStream.WriteLine(information);
-            }
-
-            var actual1 = string.Join("", printerCanon1.Print(fileName1).Trim().Split(' ').Select(str => ((char)byte.Parse(str)).ToString())).Trim();
-
-            Assert.AreEqual(actual1, information);
-
-            using (var fileStream = File.CreateText(fileName2))
-            {
-                fileStream.WriteLine(information);
-            }
-
-            var actual2 = printerEpson1.Print(fileName1).Trim();
-
-            Assert.AreEqual(actual2, information);
-        }
     }
 }
