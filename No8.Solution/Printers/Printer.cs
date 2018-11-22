@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 
 namespace No8.Solution.Printers
 {
@@ -7,6 +8,22 @@ namespace No8.Solution.Printers
     /// </summary>
     public abstract class Printer : IEquatable<Printer>
     {
+        #region Events
+
+        /// <summary>
+        ///     Event that happens when printing starts
+        /// </summary>
+        public event EventHandler<string/*PrintedEventArgs*/> StartPrint = delegate { };
+
+        /// <summary>
+        ///     Event that happens when printing ends
+        /// </summary>
+        public event EventHandler<string/*PrintedEventArgs*/> EndPrint = delegate { };
+
+        #endregion
+
+        #region Properties
+
         /// <summary>
         ///     Brand of printer
         /// </summary>
@@ -17,11 +34,13 @@ namespace No8.Solution.Printers
         /// </summary>
         public string Model { get; }
 
+        #endregion
+
         /// <summary>
-        ///     
+        ///     Constructor
         /// </summary>
-        /// <param name="brand"></param>
-        /// <param name="model"></param>
+        /// <param name="brand">Brand of <see cref="Printer"/></param>
+        /// <param name="model">Model of <see cref="Printer"/></param>
         protected Printer(string brand, string model)
         {
             Brand = brand;
@@ -29,11 +48,40 @@ namespace No8.Solution.Printers
         }
 
         /// <summary>
-        ///     Performs printing of text from some file 
+        ///     Print information from some <see cref="Stream"/>
         /// </summary>
-        /// <param name="fileName">File name</param>
-        /// <returns>Text from file</returns>
-        public abstract string Print(string fileName);
+        /// <param name="stream"><see cref="Stream"/> to read for print</param>
+        /// <exception cref="ArgumentNullException">Throws whe <see cref="Stream"/> has null reference</exception>
+        public void Print(Stream stream)
+        {
+            if (stream == null) throw new ArgumentNullException(nameof(stream));
+
+            OnStartPrint("Printer has started work...");
+
+            ConcretePrint(stream);
+
+            OnEndPrint("Printer has finished work...");
+        }
+
+        /// <summary>
+        ///     Concrete print from some <see cref="Stream"/>
+        /// </summary>
+        /// <param name="stream"><see cref="Stream"/> to read for print</param>
+        protected abstract void ConcretePrint(Stream stream);
+
+        /// <summary>
+        ///     Triggers StartPrint event
+        /// </summary>
+        /// <param name="e">Some <see cref="String"/> message</param>
+        protected virtual void OnStartPrint(string e) => StartPrint(this, e);
+
+        /// <summary>
+        ///     Triggers EndPrint event
+        /// </summary>
+        /// <param name="e">Some <see cref="String"/> message</param>
+        protected virtual void OnEndPrint(string e) => EndPrint(this, e);
+
+        #region IEquatable methods
 
         /// <summary>
         ///     Checks if two printers are equivalent
@@ -56,8 +104,7 @@ namespace No8.Solution.Printers
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != GetType()) return false;
-            return Equals((Printer) obj);
+            return obj.GetType() == GetType() && Equals((Printer) obj);
         }
 
         /// <summary>
@@ -72,6 +119,10 @@ namespace No8.Solution.Printers
             }
         }
 
+        #endregion
+
+        #region Object methods
+
         /// <summary>
         ///     Returns string representation of printer object
         /// </summary>
@@ -80,5 +131,7 @@ namespace No8.Solution.Printers
         {
             return $"{Brand} - {Model}";
         }
+
+        #endregion
     }
 }

@@ -1,6 +1,5 @@
-﻿using System.IO;
-using System.Text;
-using System.Windows.Forms;
+﻿using System;
+using System.IO;
 
 namespace No8.Solution.Printers
 {
@@ -18,32 +17,19 @@ namespace No8.Solution.Printers
         }
 
         /// <summary>
-        ///     Performs printing of text from some file 
+        ///     Concrete print from some <see cref="Stream"/>
         /// </summary>
-        /// <param name="fileName">File name</param>
-        /// <returns>Text from file</returns>
-        /// <exception cref="FileNotFoundException">Throws if file with this name doesn't exist</exception>
-        public override string Print(string fileName)
+        /// <param name="stream"><see cref="Stream"/> to read for print</param>
+        protected override void ConcretePrint(Stream stream)
         {
-            if (!File.Exists(fileName)) throw new FileNotFoundException(fileName);
+            var streamReader = new StreamReader(stream);
+            var text = streamReader.ReadToEnd();
 
-            string textToPrint;
-
-            using (var fileStream = File.OpenRead(fileName))
-            {
-                var builder = new StringBuilder();
-
-                int current;
-
-                while ((current = fileStream.ReadByte()) > -1)
-                {
-                    builder.Append(current).Append(" ");
-                }
-
-                textToPrint = builder.ToString();
-            }
-
-            return textToPrint;
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.WriteLine($"{"-".PadRight(50, '-')}");
+            Console.WriteLine(text);
+            Console.WriteLine($"{"-".PadRight(50, '-')}");
+            Console.ForegroundColor = ConsoleColor.White;
         }
     }
 }

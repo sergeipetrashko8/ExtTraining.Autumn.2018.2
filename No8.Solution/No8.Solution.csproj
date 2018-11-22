@@ -44,11 +44,9 @@
   <ItemGroup>
     <Compile Include="Log\ILoger.cs" />
     <Compile Include="Log\Logger.cs" />
-    <Compile Include="Manager\IPrinterManager.cs" />
     <Compile Include="Manager\PrinterManager.cs" />
     <Compile Include="Log\PrintedEventArgs.cs" />
-    <Compile Include="Repository\IPrintersRepository.cs" />
-    <Compile Include="Repository\PrintersRepository.cs" />
+    <Compile Include="PrintersFactory.cs" />
     <Compile Include="Printers\CanonPrinter.cs" />
     <Compile Include="Printers\EpsonPrinter.cs" />
     <Compile Include="Printers\Printer.cs" />

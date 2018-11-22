@@ -29,21 +29,21 @@ namespace No8.Solution.Console
                 WriteLine("1: Add new printer.");
                 WriteLine("2: Print on Epson.");
                 WriteLine("3: Print on Canon.");
-                WriteLine("4: Exit.");
+                WriteLine("4: View all printers.");
+                WriteLine("5: Exit.");
 
                 WriteLine();
 
                 Write("Number of your choice: ");
 
-                if (int.TryParse(ReadLine(), out int choice) && Enumerable.Range(1, 4).Contains(choice))
+                if (int.TryParse(ReadLine(), out int choice) && Enumerable.Range(1, 5).Contains(choice))
                 {
                     switch (choice)
                     {
                         case 1:
-                        {
                             while (true)
                             {
-                                WriteLine("\nChose a brand:");
+                                WriteLine("\nPrinter of who brand do you want to add?:");
                                 WriteLine("1: Epson.");
                                 WriteLine("2: Canon.");
                                 WriteLine("3: Cancel.");
@@ -57,40 +57,40 @@ namespace No8.Solution.Console
                                     switch (choice1)
                                     {
                                         case 1:
-                                        {
-
                                             while (true)
                                             {
-                                                Write("\nEnter a Epson model name: ");
+                                                Write("\nEnter a Epson model name to add: ");
                                                 string modelName = ReadLine();
 
-                                                if (printerManager.Add(typeof(EpsonPrinter), modelName))
+                                                if (printerManager.Add(PrintersFactory.CreatePrinterOrDefault(typeof(EpsonPrinter), modelName)))
                                                 {
-                                                    WriteLine($"Printer Epson {modelName} added successfully!\n");
+                                                    WriteLine($"\nPrinter Epson {modelName} was added successfully!\n");
 
                                                     break;
                                                 }
 
-                                                WriteLine($"Printer Epson {modelName} is already exists!\n");
-                                                }
-                                                break;
-                                        }
+                                                WriteLine($"\nPrinter Epson {modelName} is already exists!");
+                                            }
 
+                                            break;
+                                        
                                         case 2:
                                             while (true)
                                             {
-                                                Write("\nEnter a Canon model name: ");
+                                                Write("\nEnter a Canon model name to add: ");
                                                 string modelName = ReadLine();
 
-                                                if (printerManager.Add(typeof(CanonPrinter), modelName))
+                                                if (printerManager.Add(PrintersFactory.CreatePrinterOrDefault(typeof(CanonPrinter), modelName)))
                                                 {
-                                                    WriteLine($"Printer Canon {modelName} added successfully!\n");
+                                                    WriteLine($"\nPrinter Canon {modelName} was added successfully!\n");
+
                                                     break;
                                                 }
 
-                                                WriteLine($"Printer Epson {modelName} is already exists!\n");
+                                                WriteLine($"\nPrinter Canon {modelName} is already exists!");
                                             }
-                                                break;
+
+                                            break;
 
                                         case 3:
                                             break;
@@ -98,63 +98,68 @@ namespace No8.Solution.Console
 
                                     break;
                                 }
+
+                                WriteLine("\nInvalid choice! Please try again!");
                             }
+
                             break;
-                        }
+
                         case 2:
-                        {
-                            WriteLine("\nAll models of Epson:");
-
-                            IEnumerable<Printer> epsonPrinters =
-                                printerManager.Where(printer => printer.Brand == "Epson");
-
-                            if (epsonPrinters.Count() == 0)
                             {
-                                WriteLine("There aren't Epson printers into the repository!\n");
-                                break;
-                            }
-                            
-                            foreach (var printer in epsonPrinters)
-                            {
-                                WriteLine(printer);
-                            }
+                                WriteLine("\nAll models of Epson:");
 
-                            Write("Chose model: ");
+                                IEnumerable<Printer> epsonPrinters = printerManager.GetPrintersByBrand(typeof(EpsonPrinter));
 
-                            string model = ReadLine();
+                                if (epsonPrinters.Count() == 0)
+                                {
+                                    WriteLine("There aren't Epson printers!!!\n");
+                                    break;
+                                }
 
-                            if (epsonPrinters.Any(printer => printer.Model == model))
-                            {
-                                var openFileDlg = new OpenFileDialog();
-                                openFileDlg.Multiselect = false;
-                                openFileDlg.CheckFileExists = true;
-                                openFileDlg.ShowDialog();
+                                foreach (var printer in epsonPrinters)
+                                {
+                                    WriteLine(printer);
+                                }
 
-                                ForegroundColor = ConsoleColor.Cyan;
-                                if (File.Exists(openFileDlg.FileName)) WriteLine(printerManager.Print(typeof(EpsonPrinter), model, openFileDlg.FileName));
-                                ForegroundColor = ConsoleColor.White;
-                            }
+                                Write("Chose model: ");
+
+                                string model = ReadLine();
+
+                                if (epsonPrinters.Any(printer => printer.Model == model))
+                                {
+                                    var openFileDlg = new OpenFileDialog { Multiselect = false, CheckFileExists = true };
+
+                                    while(true)
+                                    {
+                                        openFileDlg.ShowDialog();
+                                        if (!string.IsNullOrWhiteSpace(openFileDlg.FileName)) break;
+                                        WriteLine("\nInvalid file name!!! Try again!\n");
+                                    }
+
+                                    if (File.Exists(openFileDlg.FileName)) printerManager.Print(printerManager.TakePrinter(typeof(EpsonPrinter), model), openFileDlg.FileName); // TODO
+                                    ForegroundColor = ConsoleColor.White;
+                                }
 
                                 else
-                            {
-                                WriteLine("No printers of this model!\n");
-                            }
+                                {
+                                    WriteLine("\nNo printers of this model!\n");
+                                }
 
                             }
                             break;
-                        case 3:
-                        {
-                            WriteLine("\nAll models of Canon:");
 
-                            IEnumerable<Printer> canonPrinters =
-                                printerManager.Where(printer => printer.Brand.Equals("Canon"));
-
-                            if (canonPrinters.Count() == 0)
+                            case 3:
                             {
-                                WriteLine("There aren't Canon printers into the repository!\n");
-                                break;
-                            }
-                            
+                                WriteLine("\nAll models of Canon:");
+
+                                IEnumerable<Printer> canonPrinters = printerManager.GetPrintersByBrand(typeof(CanonPrinter));
+
+                                if (canonPrinters.Count() == 0)
+                                {
+                                    WriteLine("There aren't Canon printers!!!\n");
+                                    break;
+                                }
+
                                 foreach (var printer in canonPrinters)
                                 {
                                     WriteLine(printer);
@@ -162,40 +167,49 @@ namespace No8.Solution.Console
 
                                 Write("Chose model: ");
 
-                            string model = ReadLine();
+                                string model = ReadLine();
 
-                            if (canonPrinters.Any(printer => printer.Model == model))
-                            {
-                                var openFileDlg = new OpenFileDialog {Multiselect = false, CheckFileExists = true};
-                                openFileDlg.ShowDialog();
+                                if (canonPrinters.Any(printer => printer.Model == model))
+                                {
+                                    var openFileDlg = new OpenFileDialog { Multiselect = false, CheckFileExists = true };
 
-                                ForegroundColor = ConsoleColor.Cyan;
-                                if (File.Exists(openFileDlg.FileName)) WriteLine(printerManager.Print(typeof(CanonPrinter), model, openFileDlg.FileName));
-                                ForegroundColor = ConsoleColor.White;
+                                    while (true)
+                                    {
+                                        openFileDlg.ShowDialog();
+                                        if (!string.IsNullOrWhiteSpace(openFileDlg.FileName)) break;
+                                        WriteLine("\nInvalid file name!!! Try again!\n");
+                                    }
+
+                                    if (File.Exists(openFileDlg.FileName)) printerManager.Print(printerManager.TakePrinter(typeof(CanonPrinter), model), openFileDlg.FileName); // TODO
+                                    ForegroundColor = ConsoleColor.White;
+                                }
+
+                                else
+                                {
+                                    WriteLine("\nNo printers of this model!\n");
+                                }
+
                             }
-
-                            else
-                            {
-                                WriteLine("No printers of this model!\n");
-                            }
-                        }
                             break;
+
                         case 4:
-                            WriteLine("Application closed. Press any key to exit...");
+                            Write("\nAll available printers:\n");
+                            WriteLine(string.Join("\n", printerManager.GetPrintersByBrand(typeof(EpsonPrinter))));
+                            WriteLine(string.Join("\n", printerManager.GetPrintersByBrand(typeof(CanonPrinter))));
+                            WriteLine("\n");
+                            break;
+
+                        case 5:
+                            Write("\nApplication closed. Press any key to exit...");
                             Read();
                             return;
                     }
+                }
+                else
+                {
+                    WriteLine("\nInvalid choice! Please try again!\n");
                 }
             }
         }
     }
 }
-
-/*
-
-возможность добавления нового принтера в систему с указанием его имени и модели, которые должны быть уникальными;
-
-после добавления принтер становится доступным в списке принтеров для печати;
-
-возможность масштабируемости и легкости сопровождения системы.
-*/
